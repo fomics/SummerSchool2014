@@ -1,0 +1,32 @@
+*.i
+*.mod
+*.o
+*.a
+*.so
+
+# executables
+main
+main_mpi
+
+# vis output
+*.bin
+*.bov
+
+# vim backup files
+*.swp
+*.swo
+*.swn
+
+# cray compiler diagnostics
+*.cub
+*.ptx
+*.cg
+*.lst
+*.opt
+
+tmp
+*.png
+visitlog.py
+.fuse*
+*.log
+job.out
