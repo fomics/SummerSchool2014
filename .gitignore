@@ -17,6 +17,9 @@ main_mpi
 *.swo
 *.swn
 
+#emacs backupfiles
+*~
+
 # cray compiler diagnostics
 *.cub
 *.ptx
@@ -30,3 +33,4 @@ visitlog.py
 .fuse*
 *.log
 job.out
+log
