@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm -f output.*
+rm -f *.png
+rm -f log
+rm -f visitlog.py
+
