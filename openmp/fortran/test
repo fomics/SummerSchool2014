@@ -1,0 +1,17 @@
+#!/bin/bash
+executable=./a.out
+if [ -f "$1.exe" ]; then
+    executable="./$1.exe"
+fi
+
+echo "============ testing $executable ============"
+
+cc_string=0
+for threads in 1 2 4 8
+do
+    echo "============  $threads threads ============"
+    cc_string=none
+    export OMP_NUM_THREADS=$threads
+    aprun -cc="$cc_string" $executable
+done
+
