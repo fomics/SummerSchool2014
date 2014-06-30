@@ -1,4 +1,4 @@
-all: dot.exe normalize.exe hello_world.exe sum_threads.exe pi.exe
+all: dot.exe normalize.exe hello_world.exe sum_threads.exe pi.exe first_touch.exe 
 
 pi.exe : pi.cpp
 	CC pi.cpp -fopenmp -o pi.exe
@@ -14,6 +14,9 @@ dot.exe : dot.cpp
 
 sum_threads.exe : sum_threads.cpp
 	CC sum_threads.cpp -fopenmp -o sum_threads.exe
+
+first_touch.exe : first_touch.cpp
+	CC first_touch.cpp -fopenmp -o first_touch.exe
 
 clean :
 	rm -f *.exe
