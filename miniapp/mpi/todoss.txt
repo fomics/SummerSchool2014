@@ -1,0 +1,10 @@
+MPI Todo list:
+---------------------
+
+* set the rank of neighbors (north,east,south,west)
+* set the index of boundaries
+* complete communications for the collective communications
+* complete boundary swapping communications
+
+To run:
+aprun -n 4 ./main 128 128 100 0.01 yes
