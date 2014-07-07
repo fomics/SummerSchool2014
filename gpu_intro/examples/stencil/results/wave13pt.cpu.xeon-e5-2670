@@ -1,0 +1,5 @@
+./wave13pt 512 256 256 10
+m0 = 0.680375, m1 = -0.035206, m2 = 0.094366
+initial mean = 0.000024
+compute time = 0.279701 sec
+final mean = 0.000173

@@ -1,0 +1,10 @@
+PGI_ACC_TIME=1 ./wave13pt 512 256 256 10
+m0 = 0.680375, m1 = -0.035206, m2 = 0.094366
+initial mean = 0.000024
+init time = 0.174630 sec
+device buffer alloc time = 0.003562 sec
+data load time = 0.146108 sec (2.566594 GB/sec)
+compute time = 0.046482 sec
+data save time = 0.041074 sec (3.043317 GB/sec)
+final mean = 0.000173
+Application 2345013 resources: utime ~1s, stime ~1s, Rss ~540448, inblocks ~396, outblocks ~334

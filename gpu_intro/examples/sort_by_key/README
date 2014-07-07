@@ -1,0 +1,119 @@
+sort_by_key - sort (keys, values) array using Thrust
+
+Purpose: learn how to implement sorting in Thrust, compare performance
+of CPU and GPU versions.
+
+Fill the parts of the code marked with "TODO"s to get a fully working sample.
+To complete the example, please refer to:
+http://code.google.com/p/thrust/
+http://code.google.com/p/thrust/wiki/QuickStartGuide#Sorting
+
+*When finished, look into thrust/detail/dispatch/sort.h and figure out
+what sorting algorithms are used in different cases. Try to adjust sorting
+algorithm used in the sample to particular one and check how the performance is
+affected.
+
+1) Sorting correctnes test (small N)
+
+marcusmae@teslatron:~/sort_by_key$ ./sort_by_key.cpu 16
+Input data:
+(1804289383, 1365180540)
+(846930886, 1540383426)
+(1681692777, 304089172)
+(1714636915, 1303455736)
+(1957747793, 35005211)
+(424238335, 521595368)
+(719885386, 294702567)
+(1649760492, 1726956429)
+(596516649, 336465782)
+(1189641421, 861021530)
+(1025202362, 278722862)
+(1350490027, 233665123)
+(783368690, 2145174067)
+(1102520059, 468703135)
+(2044897763, 1101513929)
+(1967513926, 1801979802)
+
+Load time = 0.000000 sec
+Sort time = 0.000001 sec
+Save time = 0.000000 sec
+Output data:
+(424238335, 521595368)
+(596516649, 336465782)
+(719885386, 294702567)
+(783368690, 2145174067)
+(846930886, 1540383426)
+(1025202362, 278722862)
+(1102520059, 468703135)
+(1189641421, 861021530)
+(1350490027, 233665123)
+(1649760492, 1726956429)
+(1681692777, 304089172)
+(1714636915, 1303455736)
+(1804289383, 1365180540)
+(1957747793, 35005211)
+(1967513926, 1801979802)
+(2044897763, 1101513929)
+
+marcusmae@teslatron:~/sort_by_key$ ./sort_by_key.gpu 16
+Input data:
+(1804289383, 1365180540)
+(846930886, 1540383426)
+(1681692777, 304089172)
+(1714636915, 1303455736)
+(1957747793, 35005211)
+(424238335, 521595368)
+(719885386, 294702567)
+(1649760492, 1726956429)
+(596516649, 336465782)
+(1189641421, 861021530)
+(1025202362, 278722862)
+(1350490027, 233665123)
+(783368690, 2145174067)
+(1102520059, 468703135)
+(2044897763, 1101513929)
+(1967513926, 1801979802)
+
+Load time = 0.068673 sec
+Sort time = 0.000494 sec
+Save time = 0.000023 sec
+Output data:
+(424238335, 1365180540)
+(596516649, 1540383426)
+(719885386, 304089172)
+(783368690, 1303455736)
+(846930886, 35005211)
+(1025202362, 521595368)
+(1102520059, 294702567)
+(1189641421, 1726956429)
+(1350490027, 336465782)
+(1649760492, 861021530)
+(1681692777, 278722862)
+(1714636915, 233665123)
+(1804289383, 2145174067)
+(1957747793, 468703135)
+(1967513926, 1101513929)
+(2044897763, 1801979802)
+
+2) Sorting on Intel Core2 Quad Q6600 @ 2.40GHz and NVIDIA Tesla C2050
+
+marcusmae@teslatron:~/sort_by_key$ ./sort_by_key.cpu $((1024*1024*128))
+Load time = 0.000000 sec
+Sort time = 35.166115 sec
+Save time = 0.000000 sec
+marcusmae@teslatron:~/sort_by_key$ ./sort_by_key.gpu $((1024*1024*128))
+Load time = 0.662939 sec
+Sort time = 0.412526 sec
+Save time = 0.297485 sec
+
+3) Sorting on Intel Xeon E5620 @ 2.40GHz and NVIDIA Tesla S1060
+
+[dmikushin@tesla-cmc sort_by_key]$ ./sort_by_key.cpu $((1024*1024*128))
+Load time = 0.000000 sec
+Sort time = 7.626176 sec
+Save time = 0.000000 sec
+[dmikushin@tesla-cmc sort_by_key]$ ./sort_by_key.gpu $((1024*1024*128))
+Load time = 0.464901 sec
+Sort time = 0.917674 sec
+Save time = 0.176966 sec
+

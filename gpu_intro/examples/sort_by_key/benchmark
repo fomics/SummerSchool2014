@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+if (scalar(@ARGV) != 4)
+{
+	print "Usage: benchmark <variant> <min_length> <max_length> <step_length>\n";
+	exit(1);
+}
+
+my($variant) = $ARGV[0];
+my($min_length) = $ARGV[1];
+my($max_length) = $ARGV[2];
+my($step_length) = $ARGV[3];
+
+if (! -e $variant)
+{
+	print "$variant: Command not found\n";
+	exit(2);
+}
+
+print "init\tload\tsort\tsave\n";
+
+my($length);
+for ($length = $min_length; $length <= $max_length; $length *= $step_length)
+{
+	print "$length\t";
+	my($result) = join("", `SINK_LD_LIBRARY_PATH=. micnativeloadex $variant -a \"$length\"`);
+	if ($result =~ s/Init\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\t";
+	if ($result =~ s/Load\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\t";
+	if ($result =~ s/Sort\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\t";
+	if ($result =~ s/Save\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\n";
+}
+
