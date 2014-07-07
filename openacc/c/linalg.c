@@ -42,8 +42,15 @@ double ss_dot(const double* x, const double* y, const int N)
 {
     double result = 0;
 	int i;
+//
+// TODO:  ACC PARALLEL region: 
+//          Variables X and Y should be present
+// TODO:  ACC LOOP with a reduction of variable ACC
+
     for (i = 0; i < N; i++)
         result += x[i] * y[i];
+
+// TODO:  end ACC PARALLEL region: 
 
     // record the number of floating point oporations
     flops_blas1 = flops_blas1 + 2 * N;
@@ -57,6 +64,9 @@ double ss_norm2(const double* x, const int N)
 {
     double result = 0;
 	int i;
+// TODO:  ACC PARALLEL region: 
+//          Variable X should be present
+// TODO:  ACC LOOP with a reduction of variable ACC
     for (i = 0; i < N; i++)
         result += x[i] * x[i];
 
@@ -74,6 +84,7 @@ double ss_norm2(const double* x, const int N)
 void ss_fill(double* x, const double value, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         x[i] = value;
 }
@@ -88,6 +99,7 @@ void ss_fill(double* x, const double value, const int N)
 void ss_axpy(double* y, const double alpha, const double* x, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         y[i] += alpha * x[i];
 
@@ -102,6 +114,7 @@ void ss_add_scaled_diff(double* y, const double* x, const double alpha,
     const double* l, const double* r, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         y[i] = x[i] + alpha * (l[i] - r[i]);
 
@@ -116,6 +129,7 @@ void ss_scaled_diff(double* y, const double alpha,
     const double* l, const double* r, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         y[i] = alpha * (l[i] - r[i]);
 
@@ -129,6 +143,7 @@ void ss_scaled_diff(double* y, const double alpha,
 void ss_scale(double* y, const double alpha, double* x, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         y[i] = alpha * x[i];
 
@@ -143,6 +158,7 @@ void ss_lcomb(double* y, const double alpha, double* x, const double beta,
     const double* z, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         y[i] = alpha * x[i] + beta * z[i];
 
@@ -155,6 +171,7 @@ void ss_lcomb(double* y, const double alpha, double* x, const double beta,
 void ss_copy(double* y, const double* x, const int N)
 {
 	int i;
+// TODO:  ACC PARALLEL region: 
     for (i = 0; i < N; i++)
         y[i] = x[i];
 }

@@ -152,6 +152,8 @@ int main(int argc, char* argv[])
     double alpha = options.alpha;
     double tolerance = 1.e-6;
     int timestep;
+// TODO :   copy to device:  x_old, x_new, deltax, Ap, p, r, b, v, Fx, Fxold, 
+//          x, xold, bndN, bndE, bndS, bndW, options, buffN, buffE, buffW, buffS
     for (timestep = 1; timestep <= nt; timestep++)
     {
         // set x_new and x_old to be the solution
@@ -195,6 +197,7 @@ int main(int argc, char* argv[])
             break;
         }
     }
+// TODO: end of data region
 
     // get times
     timespent += omp_get_wtime();

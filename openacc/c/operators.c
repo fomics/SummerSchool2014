@@ -35,6 +35,10 @@ void diffusion(const double* up, double* sp)
     int nx=options.nx;
     int ny=options.ny;
 
+// TODO:  parallel region: folloing should be present:
+//            s, u, x_old, bndE, bndW, bndN, bndS, options
+
+// TODO: add acceleration on ALL loops
     // the interior grid points
     for (j = 1; j < jend; j++)
         for (i = 1; i < iend; i++)
