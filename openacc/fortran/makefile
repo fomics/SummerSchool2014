@@ -38,7 +38,7 @@ operators.o: operators.f90
 	$(FTN) $(FFLAGS) $(IFLAGS) -c operators.f90 -o operators.o
 
 operators_mpi.o: operators_mpi.f90
-	$(FTN) $(FFLAGS) $(IFLAGS) -c operators_mpi.f90 -o operators_mpi.o -DUSE_G2G
+	$(FTN) $(FFLAGS) $(IFLAGS) -c operators_mpi.f90 -o operators_mpi.o
 #	$(FTN) $(FFLAGS) $(IFLAGS) -c operators_mpi.f90 -o operators_mpi.o
 
 linalg.o: linalg.f90
