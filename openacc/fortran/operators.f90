@@ -37,13 +37,14 @@ subroutine diffusion(u, s)
     jend  = options%ny-1
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !$acc parallel present(s, u, x_old, bndE, bndW, bndN, bndS, options)
+! TODO:  parallel region: folloing should be present:
+!            s, u, x_old, bndE, bndW, bndN, bndS, options
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! the interior grid points
-    !$acc loop
+! TODO: ACC LOOP
     do j = 2, jend
-        !$acc loop
+! TODO: ACC LOOP
         do i = 2, iend
             s(i,j) = -(4.+alpha) * u(i,j)           &   ! central point
                         + u(i-1, j) + u(i+1, j)     &   ! east and west
@@ -55,7 +56,7 @@ subroutine diffusion(u, s)
 
     ! the east boundary
     i = options%nx
-    !$acc loop
+! TODO: ACC LOOP
     do j = 2, jend
         s(i,j) = -(4.+alpha) * u(i,j)        &
                     + u(i-1, j) + u(i, j-1) + u(i, j+1) &
@@ -65,7 +66,7 @@ subroutine diffusion(u, s)
 
     ! the west boundary
     i = 1
-    !$acc loop
+! TODO: ACC LOOP
     do j = 2, jend
         s(i,j) = -(4.+alpha) * u(i,j)         &
                     + u(i+1, j) + u(i, j-1) + u(i, j+1) &
@@ -83,7 +84,7 @@ subroutine diffusion(u, s)
                 + dxs*u(i,j)*(1.0_8 - u(i,j))
 
     ! north boundary
-    !$acc loop
+! TODO: ACC LOOP
     do i = 2, iend
         s(i,j) = -(4.+alpha) * u(i,j)        &
                     + u(i-1, j) + u(i+1, j) + u(i, j-1) &
@@ -108,7 +109,7 @@ subroutine diffusion(u, s)
                 + dxs*u(i,j)*(1.0_8 - u(i,j))
 
     ! south boundary
-    !$acc loop
+! TODO: ACC LOOP
     do i = 2, iend
         s(i,j) = -(4.+alpha) * u(i,j)           &
                     + u(i-1,j  ) + u(i+1,j  )   &
@@ -126,7 +127,7 @@ subroutine diffusion(u, s)
                 + dxs*u(i,j)*(1.0_8 - u(i,j))
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !$acc end parallel
+! TODO: end of parallel region
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! accumulate the flop counts

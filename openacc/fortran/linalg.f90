@@ -45,12 +45,15 @@ real (kind=8) function ss_dot(x, y, N)
 
     ! the logic
     acc = 0
-    !$acc parallel present(x,y)
-    !$acc loop reduction(+:acc)
+
+!
+! TODO:  ACC PARALLEL region: 
+!          Variables X and Y should be present
+! TODO:  ACC LOOP with a reduction of variable ACC
     do i = 1, N
         acc = acc + x(i) * y(i)
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
 
     call mpi_allreduce(acc, accglobal, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD, err)
     ss_dot = accglobal
@@ -74,12 +77,14 @@ real (kind=8) function ss_norm2(x, N)
 
     ! the logic
     acc = 0
-    !$acc parallel present(x)
-    !$acc loop reduction(+:acc)
+!
+! TODO:  ACC PARALLEL region: 
+!          Variables X and Y should be present
+! TODO:  ACC LOOP with a reduction of variable ACC
     do i = 1, N
         acc = acc + x(i) * x(i)
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
     call mpi_allreduce(acc, accglobal, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD, err)
     ss_norm2 = sqrt(accglobal)
 
@@ -101,12 +106,15 @@ subroutine ss_fill(x, value, N)
     integer :: i
 
     ! the logic
-    !$acc parallel present(x)
-    !$acc loop
+!
+! TODO:  ACC PARALLEL region: 
+!          Variable X should be present
+! TODO:  ACC LOOP 
     do i = 1, N
         x(i) = value
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
+
 end
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -126,12 +134,14 @@ subroutine ss_axpy(y, alpha, x, N)
     integer :: i
 
     ! the logic
-    !$acc parallel present(x,y)
-    !$acc loop
+!
+! TODO:  ACC PARALLEL region: 
+!          Variables X and Y should be present
+! TODO:  ACC LOOP 
     do i = 1, N
         y(i) = alpha*x(i) + y(i)
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
 
     ! update the flops counter
     flops_blas1 = flops_blas1 + 2*N
@@ -152,12 +162,15 @@ subroutine ss_add_scaled_diff(y, x, alpha, l, r, N)
     ! local variables
     integer :: i
 
-    !$acc parallel present(x,y,l,r)
-    !$acc loop
+!
+! TODO:  ACC PARALLEL region: 
+!          Which variables hould be present?
+! TODO:  ACC LOOP 
+
     do i = 1, N
         y(i) = x(i) + alpha * (l(i) - r(i))
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
 
     ! update the flops counter
     flops_blas1 = flops_blas1 + 3*N
@@ -177,12 +190,15 @@ subroutine ss_scaled_diff(y, alpha, l, r, N)
     ! local variables
     integer :: i
 
-    !$acc parallel present(y,l,r)
-    !$acc loop
+!
+! TODO:  ACC PARALLEL region: 
+!          Which variables hould be present?
+! TODO:  ACC LOOP 
+
     do i = 1, N
         y(i) = alpha * (l(i) - r(i))
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
 
     ! update the flops counter
     flops_blas1 = flops_blas1 + 2*N
@@ -202,12 +218,14 @@ subroutine ss_scale(y, alpha, x, N)
     integer :: i
 
     ! the logic
-    !$acc parallel present(x,y)
-    !$acc loop
+!   
+! TODO:  ACC PARALLEL region: 
+!          Which variables hould be present?
+! TODO:  ACC LOOP 
     do i = 1, N
         y(i) = alpha*x(i)
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
 
     ! update the flops counter
     flops_blas1 = flops_blas1 + N
@@ -229,12 +247,15 @@ subroutine ss_lcomb(y, alpha, x, beta, z, N)
     integer :: i
 
     ! the logic
-    !$acc parallel present(y,x,z)
-    !$acc loop
+!   
+! TODO:  ACC PARALLEL region: 
+!          Which variables hould be present?
+! TODO:  ACC LOOP 
+
     do i = 1, N
         y(i) = alpha*x(i) + beta*z(i)
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
 
     ! update the flops counter
     flops_blas1 = flops_blas1 + 3*N
@@ -252,12 +273,16 @@ subroutine ss_copy(y, x, N)
     integer :: i
 
     ! the logic
-    !$acc parallel present(x,y)
-    !$acc loop
+!   
+! TODO:  ACC PARALLEL region: 
+!          Which variables hould be present?
+! TODO:  ACC LOOP 
+
     do i = 1, N
         y(i) = x(i)
     enddo
-    !$acc end parallel
+! TODO: end of parallel region
+
 end
 
 ! conjugate gradient solver

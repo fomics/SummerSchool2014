@@ -139,7 +139,10 @@ program diffusion_serial
     converged = .true.
 
     timestep = 1;
-    !$acc data copy(x_old, x_new, deltax, Ap, p, r, b, v, Fx, Fxold, x, xold, bndN, bndE, bndS, bndW, options, buffN, buffE, buffW, buffS)
+
+!
+! TODO :   copy to device:  x_old, x_new, deltax, Ap, p, r, b, v, Fx, Fxold, 
+!          x, xold, bndN, bndE, bndS, bndW, options, buffN, buffE, buffW, buffS
     !$acc wait
 
     ! start timer
@@ -193,7 +196,10 @@ program diffusion_serial
     !$acc wait
     ! get times
     timespent = timespent + omp_get_wtime();
-    !$acc end data
+
+!
+!   TODO: end of data region
+!
 
     flops_total = flops_diff + flops_blas1
 

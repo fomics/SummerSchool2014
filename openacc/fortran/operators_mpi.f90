@@ -39,32 +39,31 @@ subroutine diffusion(u, s)
     ny  = options%ny
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !$acc data present(u, buffN, buffS, buffE, buffW)
+!
+! TODO: data region: following should be present
+!          u, buffN, buffS, buffE, buffW
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !$acc parallel
-    !$acc loop
+! TODO: parallel region, all loops should be accelerated
     do i = 1,nx
         buffN(i) = u(i,ny)
     end do
-    !$acc loop
     do i = 1,nx
         buffS(i) = u(i,1)
     end do
-    !$acc loop
     do j = 1,ny
         buffE(j) = u(nx,j)
     end do
-    !$acc loop
     do j = 1,ny
         buffW(j) = u(1,j)
     end do
-    !$acc end parallel
+! TODO: end of parallel region
 
 #ifdef USE_G2G
     !$acc host_data use_device(bndN, buffN, bndS, buffS, bndE, buffE, bndW, buffW)
 #else
-    !$acc update host(buffN, buffE, buffS, buffW)
+! TODO: update the following on the host
+!           buffN, buffE, buffS, buffW
 #endif
     num_requests = 0
     if (domain%neighbour_north>=0) then
@@ -105,14 +104,14 @@ subroutine diffusion(u, s)
 #endif
     call mpi_waitall(num_requests, requests, stats, err)
 #ifndef USE_G2G
-    !$acc update device (bndE, bndW, bndS, bndN)
+! TODO: update the following on the device
+!  bndE, bndW, bndS, bndN
 #endif
 
-    !$acc parallel 
+
+! TODO: parallel region with all loops accelerated
     ! the interior grid points
-    !$acc loop
     do j = 2, jend
-        !$acc loop
         do i = 2, iend
             s(i,j) = -(4.+alpha) * u(i,j)           &   ! central point
                         + u(i-1, j) + u(i+1, j)     &   ! east and west
@@ -124,7 +123,6 @@ subroutine diffusion(u, s)
 
     ! the east boundary
     i = options%nx
-    !$acc loop
     do j = 2, jend
         s(i,j) = -(4.+alpha) * u(i,j)        &
                     + u(i-1, j) + u(i, j-1) + u(i, j+1) &
@@ -134,7 +132,6 @@ subroutine diffusion(u, s)
 
     ! the west boundary
     i = 1
-    !$acc loop
     do j = 2, jend
         s(i,j) = -(4.+alpha) * u(i,j)         &
                     + u(i+1, j) + u(i, j-1) + u(i, j+1) &
@@ -152,7 +149,6 @@ subroutine diffusion(u, s)
                 + dxs*u(i,j)*(1.0_8 - u(i,j))
 
     ! north boundary
-    !$acc loop
     do i = 2, iend
         s(i,j) = -(4.+alpha) * u(i,j)                   &
                     + u(i-1, j) + u(i+1, j) + u(i, j-1) &
@@ -177,7 +173,6 @@ subroutine diffusion(u, s)
                 + dxs*u(i,j)*(1.0_8 - u(i,j))
 
     ! south boundary
-    !$acc loop
     do i = 2, iend
         s(i,j) = -(4.+alpha) * u(i,j)           &
                     + u(i-1,j  ) + u(i+1,j  )   &
@@ -195,8 +190,8 @@ subroutine diffusion(u, s)
                 + dxs*u(i,j)*(1.0_8 - u(i,j))
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !$acc end parallel
-    !$acc end data
+! TODO: end of parallel region
+! TODO: end of data region
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! accumulate the flop counts
