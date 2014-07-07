@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+
+if (scalar(@ARGV) != 4)
+{
+	print "Usage: benchmark <variant> <min_length> <max_length> <step_length>\n";
+	exit(1);
+}
+
+my($variant) = $ARGV[0];
+my($min_length) = $ARGV[1];
+my($max_length) = $ARGV[2];
+my($step_length) = $ARGV[3];
+
+if (! -e $variant)
+{
+	print "$variant: Command not found\n";
+	exit(2);
+}
+
+print "init\tload\tcompute (GFLOPS)\tsave\n";
+
+my($cmd) = "./$variant";
+if ($variant =~ m/.*\.mic\.native.*/)
+{
+	$cmd = "SINK_LD_PRELOAD=libmkl_core.so SINK_LD_LIBRARY_PATH=. micnativeloadex ./$variant -a";
+}
+
+my($length);
+for ($length = $min_length; $length <= $max_length; $length *= $step_length)
+{
+	print "$length\t";
+	my($result) = "";
+	if ($variant =~ m/.*\.mic\.native.*/)
+	{
+		$result = join("", `$cmd \"$length\"`);
+	}
+	else
+	{
+		$result = join("", `$cmd $length`);
+	}
+	if ($result =~ s/Init\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\t";
+	if ($result =~ s/Load\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\t";
+	if ($result =~ s/Compute\stime\s=\s(?<VAL>(\d|\.)+)\ssec\s\~\s(?<GFLOPS>(\d|\.)+)\sGFLOPS//)
+	{
+		my($val) = $+{VAL};
+		my($gflops) = $+{GFLOPS};
+		print "$val ($gflops)";
+	}
+	print "\t";
+	if ($result =~ s/Save\stime\s=\s(?<VAL>(\d|\.)+)//)
+	{
+		my($val) = $+{VAL};
+		print "$val";
+	}
+	print "\n";
+}
+

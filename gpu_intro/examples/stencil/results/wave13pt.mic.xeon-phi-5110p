@@ -1,0 +1,10 @@
+./wave13pt 512 256 256 10
+m0 = 0.680375, m1 = -0.035206, m2 = 0.094366
+initial mean = 0.000024
+init time = 0.595618 sec
+device buffer alloc time = 1.462130 sec
+data load time = 0.060799 sec (6.167868 GB/sec)
+compute time = 0.688897 sec
+data save time = 0.031115 sec (4.017417 GB/sec)
+device buffer free time = 0.002116 sec
+final mean = 0.000173

@@ -1,0 +1,21 @@
+Unstable timing, possibly due to graphics rendering:
+
+aivakhnenko@aivakhnenko-All-Series:~/msu/opencl/stencil1/pgi$ ./wave13pt 512 256 256 10
+m0 = 0.680375, m1 = -0.035206, m2 = 0.094366
+initial mean = 0.000024
+init time = 0.119009 sec
+device buffer alloc time = 0.067545 sec
+data load time = 0.098706 sec (3.799147 GB/sec)
+compute time = 0.098343 sec
+data save time = 0.036088 sec (3.463757 GB/sec)
+final mean = 0.000173
+
+aivakhnenko@aivakhnenko-All-Series:~/msu/opencl/stencil1/pgi$ ./wave13pt 512 256 256 10
+m0 = 0.680375, m1 = -0.035206, m2 = 0.094366
+initial mean = 0.000024
+init time = 0.118919 sec
+device buffer alloc time = 0.070091 sec
+data load time = 0.107666 sec (3.482985 GB/sec)
+compute time = 0.050233 sec
+data save time = 0.036292 sec (3.444244 GB/sec)
+final mean = 0.000173
