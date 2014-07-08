@@ -23,7 +23,7 @@ main.o: main.c $(HEADERS)
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 main: $(OBJ)
-	$(CC) $^ -o $@ -Wl,--start-group -laccg -laccg2 -ldl -laccn -lacco -laccao -Wl,--end-group
+	$(CC) $(CCFLAGS) $^ -o $@
 
 clean:
 	rm -f main *.o *.i *.ptx *.bin *.gpu
