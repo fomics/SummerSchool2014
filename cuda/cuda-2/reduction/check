@@ -1,0 +1,18 @@
+#!/usr/bin/perl -w
+
+my($length_max) = $ARGV[0];
+
+my($length) = 0;
+for ( ; $length <= $length_max; $length++)
+{
+	my($cmd) = "./reduction $length";
+	my($output) = join("\n", `$cmd`);
+	if ($output =~ s/FAIL//)
+	{
+		printf("%-20d FAIL\n", $length);
+	}
+	else
+	{
+		printf("%-20d OK!\n", $length);
+	}
+}

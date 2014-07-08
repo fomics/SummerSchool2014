@@ -1,0 +1,37 @@
+mikushin@daint03:~/apc/openacc/mini-stencil> module load cudatoolkit
+mikushin@daint03:~/apc/openacc/mini-stencil> module load craype-accel-nvidia35
+mikushin@daint03:~/apc/openacc/mini-stencil> make
+cc -g -O3 -hlist=a -hacc -c stats.c -o stats.o
+cc -g -O3 -hlist=a -hacc -c data.c -o data.o
+cc -g -O3 -hlist=a -hacc -c operators.c -o operators.o
+cc -g -O3 -hlist=a -hacc -c linalg.c -o linalg.o
+cc -g -O3 -hlist=a -hacc -c main.c -o main.o
+cc stats.o data.o operators.o linalg.o main.o -o main -lcrayacc -lcuda
+mikushin@daint03:~/apc/openacc/mini-stencil> make test
+aprun ./main 128 128 100 0.01
+========================================================================
+                      Welcome to mini-stencil!
+mesh :: 128 * 128, dx = 0.007874
+time :: 100, time steps from 0 .. 0.010000
+========================================================================
+INITIALIZING CG STATE
+--------------------------------------------------------------------------------
+simulation took 2.505035 seconds (1.622216 GFLOP/s)
+7701 conjugate gradient iterations
+868 newton iterations
+--------------------------------------------------------------------------------
+Goodbye!
+Application 2547140 resources: utime ~2s, stime ~1s, Rss ~91040, inblocks ~670, outblocks ~1103
+mikushin@daint03:~/apc/openacc/mini-stencil> aprun ./main 4096 4096 10 0.00001
+========================================================================
+                      Welcome to mini-stencil!
+mesh :: 4096 * 4096, dx = 0.000244
+time :: 10, time steps from 0 .. 0.000010
+========================================================================
+INITIALIZING CG STATE
+--------------------------------------------------------------------------------
+simulation took 63.459331 seconds (10.398699 GFLOP/s)
+1354 conjugate gradient iterations
+40 newton iterations
+--------------------------------------------------------------------------------
+Goodbye!
