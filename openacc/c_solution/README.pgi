@@ -1,0 +1,270 @@
+dmikushin@tesla-cmc:~/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil$ make -j12
+pgcc -g -fast -Minfo=accel -ta=nvidia:keep,cc35,cuda5.5 -c stats.c -o stats.o
+pgcc -g -fast -Minfo=accel -ta=nvidia:keep,cc35,cuda5.5 -c data.c -o data.o
+pgcc -g -fast -Minfo=accel -ta=nvidia:keep,cc35,cuda5.5 -c operators.c -o operators.o
+pgcc -g -fast -Minfo=accel -ta=nvidia:keep,cc35,cuda5.5 -c linalg.c -o linalg.o
+pgcc -g -fast -Minfo=accel -ta=nvidia:keep,cc35,cuda5.5 -c main.c -o main.o
+diffusion:
+     38, Generating present(sp[0:ny*nx])
+         Generating present(up[0:ny*nx])
+         Generating present(x_old[0:ny*nx])
+         Generating present(bndE[0:ny])
+         Generating present(bndW[0:ny])
+         Generating present(bndN[0:nx])
+         Generating present(bndS[0:nx])
+         Generating present(options)
+         Accelerator kernel generated
+         41, #pragma acc loop gang /* blockIdx.x */
+         42, #pragma acc loop vector(256) /* threadIdx.x */
+         56, #pragma acc loop gang, vector(256) /* blockIdx.x threadIdx.x */
+         68, #pragma acc loop gang, vector(256) /* blockIdx.x threadIdx.x */
+         92, #pragma acc loop gang, vector(256) /* blockIdx.x threadIdx.x */
+        120, #pragma acc loop gang, vector(256) /* blockIdx.x threadIdx.x */
+     38, Generating NVIDIA code
+ss_dot:
+     26, Generating present(x[0:N])
+         Generating present(y[0:N])
+         Generating NVIDIA code
+     27, Loop is parallelizable
+         Accelerator kernel generated
+         27, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+             Sum reduction generated for result
+ss_norm2:
+     42, Generating present(x[0:N])
+         Generating NVIDIA code
+     43, Loop is parallelizable
+         Accelerator kernel generated
+         43, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+             Sum reduction generated for result
+ss_fill:
+     60, Generating present(x[0:N])
+         Generating NVIDIA code
+     61, Loop is parallelizable
+         Accelerator kernel generated
+         61, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+ss_axpy:
+     76, Generating present(x[0:N])
+         Generating present(y[0:N])
+         Generating NVIDIA code
+     77, Loop is parallelizable
+         Accelerator kernel generated
+         77, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+ss_add_scaled_diff:
+     92, Generating present(x[0:N])
+         Generating present(y[0:N])
+         Generating present(l[0:N])
+         Generating present(r[0:N])
+         Generating NVIDIA code
+     93, Loop is parallelizable
+         Accelerator kernel generated
+         93, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+ss_scaled_diff:
+    107, Generating present(y[0:N])
+         Generating present(l[0:N])
+         Generating present(r[0:N])
+         Generating NVIDIA code
+    108, Loop is parallelizable
+         Accelerator kernel generated
+        108, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+ss_scale:
+    122, Generating present(x[0:N])
+         Generating present(y[0:N])
+         Generating NVIDIA code
+    123, Loop is parallelizable
+         Accelerator kernel generated
+        123, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+ss_lcomb:
+    138, Generating present(x[0:N])
+         Generating present(y[0:N])
+         Generating present(z[0:N])
+         Generating NVIDIA code
+    139, Loop is parallelizable
+         Accelerator kernel generated
+        139, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+ss_copy:
+    151, Generating present(x[0:N])
+         Generating present(y[0:N])
+         Generating NVIDIA code
+    152, Loop is parallelizable
+         Accelerator kernel generated
+        152, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+main:
+    166, Generating copy(x_old[0:nx*ny])
+         Generating copy(x_new[0:nx*ny])
+         Generating copy(deltax[0:nx*ny])
+         Generating copy(Ap[0:nx*ny])
+         Generating copy(p[0:nx*ny])
+         Generating copy(r[0:nx*ny])
+         Generating copy(b[0:nx*ny])
+         Generating copy(v[0:nx*ny])
+         Generating copy(Fx[0:nx*ny])
+         Generating copy(Fxold[0:nx*ny])
+         Generating copy(xold[0:nx*ny])
+         Generating copy(bndN[0:nx])
+         Generating copy(bndE[0:ny])
+         Generating copy(bndS[0:nx])
+         Generating copy(bndW[0:ny])
+         Generating copy(options)
+pgcc stats.o data.o operators.o linalg.o main.o -o main -Wl,--start-group -laccg -laccg2 -ldl -laccn -lacco -laccao -Wl,--end-group
+dmikushin@tesla-cmc:~/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil$ nvidia-smi
+Tue Jul  8 00:56:15 2014       
++------------------------------------------------------+                       
+| NVIDIA-SMI 331.62     Driver Version: 331.62         |                       
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla C2075         On   | 0000:02:00.0     Off |                    0 |
+| 30%   56C   P12    31W / 225W |     10MiB /  5375MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+|   1  Tesla C2075         On   | 0000:03:00.0     Off |                    0 |
+| 30%   59C   P12    33W / 225W |     10MiB /  5375MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+|   2  Tesla K20c          On   | 0000:83:00.0     Off |                    0 |
+| 33%   46C    P8    26W / 225W |     12MiB /  4799MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+|   3  Tesla C2075         On   | 0000:84:00.0     Off |                    0 |
+| 30%   62C   P12    37W / 225W |     10MiB /  5375MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Compute processes:                                               GPU Memory |
+|  GPU       PID  Process name                                     Usage      |
+|=============================================================================|
+|  No running compute processes found                                         |
++-----------------------------------------------------------------------------+
+dmikushin@tesla-cmc:~/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil$ make test
+PGI_ACC_TIME=1 ./main 128 128 100 0.01
+========================================================================
+                      Welcome to mini-stencil!
+mesh :: 128 * 128, dx = 0.007874
+time :: 100, time steps from 0 .. 0.010000
+========================================================================
+INITIALIZING CG STATE
+--------------------------------------------------------------------------------
+simulation took 8.426406 seconds (0.482259 GFLOP/s)
+7701 conjugate gradient iterations
+868 newton iterations
+--------------------------------------------------------------------------------
+Goodbye!
+
+Accelerator Kernel Timing data
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/operators.c
+  diffusion  NVIDIA  devicenum=0
+    time(us): 5,033,468
+    38: data region reached 10105 times
+    38: compute region reached 10105 times
+        38: kernel launched 10105 times
+            grid: [1]  block: [256]
+             device time(us): total=5,033,468 max=591 min=470 avg=498
+            elapsed time(us): total=5,205,284 max=1,188 min=486 avg=515
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/main.c
+  main  NVIDIA  devicenum=0
+    time(us): 1,076
+    166: data region reached 1 time
+        166: data copyin reached 16 times
+             device time(us): total=527 max=52 min=10 avg=32
+        220: data copyout reached 16 times
+             device time(us): total=549 max=45 min=12 avg=34
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_dot  NVIDIA  devicenum=0
+    time(us): 589,912
+    26: data region reached 16170 times
+    26: compute region reached 16170 times
+        27: kernel launched 16170 times
+            grid: [128]  block: [128]
+             device time(us): total=319,035 max=145 min=13 avg=19
+            elapsed time(us): total=532,472 max=159 min=30 avg=32
+        27: reduction kernel launched 16170 times
+            grid: [1]  block: [256]
+             device time(us): total=270,877 max=140 min=12 avg=16
+            elapsed time(us): total=493,968 max=286 min=28 avg=30
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_norm2  NVIDIA  devicenum=0
+    time(us): 31,816
+    42: data region reached 868 times
+    42: compute region reached 868 times
+        43: kernel launched 868 times
+            grid: [128]  block: [128]
+             device time(us): total=16,903 max=71 min=14 avg=19
+            elapsed time(us): total=28,511 max=85 min=30 avg=32
+        43: reduction kernel launched 868 times
+            grid: [1]  block: [256]
+             device time(us): total=14,913 max=89 min=13 avg=17
+            elapsed time(us): total=26,880 max=101 min=28 avg=30
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_fill  NVIDIA  devicenum=0
+    time(us): 22,325
+    60: data region reached 1536 times
+    60: compute region reached 1536 times
+        61: kernel launched 1536 times
+            grid: [128]  block: [128]
+             device time(us): total=22,325 max=84 min=13 avg=14
+            elapsed time(us): total=44,048 max=100 min=25 avg=28
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_axpy  NVIDIA  devicenum=0
+    time(us): 256,173
+    76: data region reached 16170 times
+    76: compute region reached 16170 times
+        77: kernel launched 16170 times
+            grid: [128]  block: [128]
+             device time(us): total=256,173 max=587 min=10 avg=15
+            elapsed time(us): total=484,761 max=604 min=27 avg=29
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_add_scaled_diff  NVIDIA  devicenum=0
+    time(us): 12,276
+    92: data region reached 768 times
+    92: compute region reached 768 times
+        93: kernel launched 768 times
+            grid: [128]  block: [128]
+             device time(us): total=12,276 max=144 min=11 avg=15
+            elapsed time(us): total=23,344 max=160 min=28 avg=30
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_scaled_diff  NVIDIA  devicenum=0
+    time(us): 121,882
+    107: data region reached 7701 times
+    107: compute region reached 7701 times
+        108: kernel launched 7701 times
+            grid: [128]  block: [128]
+             device time(us): total=121,882 max=102 min=11 avg=15
+            elapsed time(us): total=233,873 max=799 min=27 avg=30
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_scale  NVIDIA  devicenum=0
+    time(us): 11,522
+    122: data region reached 768 times
+    122: compute region reached 768 times
+        123: kernel launched 768 times
+            grid: [128]  block: [128]
+             device time(us): total=11,522 max=77 min=10 avg=15
+            elapsed time(us): total=22,569 max=92 min=27 avg=29
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_lcomb  NVIDIA  devicenum=0
+    time(us): 231,746
+    138: data region reached 14634 times
+    138: compute region reached 14634 times
+        139: kernel launched 14634 times
+            grid: [128]  block: [128]
+             device time(us): total=231,746 max=110 min=11 avg=15
+            elapsed time(us): total=440,100 max=811 min=27 avg=30
+/home/dmikushin/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil/linalg.c
+  ss_copy  NVIDIA  devicenum=0
+    time(us): 23,809
+    151: data region reached 1636 times
+    151: compute region reached 1636 times
+        152: kernel launched 1636 times
+            grid: [128]  block: [128]
+             device time(us): total=23,809 max=76 min=10 avg=14
+            elapsed time(us): total=47,013 max=91 min=26 avg=28
+dmikushin@tesla-cmc:~/apc/trainings/schools/cscs_summer_school_2014/slides/openacc/mini-stencil$ ./main 4096 4096 10 0.00001
+========================================================================
+                      Welcome to mini-stencil!
+mesh :: 4096 * 4096, dx = 0.000244
+time :: 10, time steps from 0 .. 0.000010
+========================================================================
+INITIALIZING CG STATE
+--------------------------------------------------------------------------------
+simulation took 48.148269 seconds (13.715220 GFLOP/s)
+1355 conjugate gradient iterations
+40 newton iterations
+--------------------------------------------------------------------------------
+Goodbye!

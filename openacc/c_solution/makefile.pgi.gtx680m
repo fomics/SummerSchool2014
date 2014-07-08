@@ -1,0 +1,32 @@
+CC=pgcc
+CCFLAGS=-g -fast -Minfo=accel -ta=nvidia:keep,cc30,cuda5.5
+
+SOURCES = stats.c data.c operators.c linalg.c
+HEADERS = stats.h   data.h   operators.h   linalg.h
+OBJ     = stats.o   data.o   operators.o   linalg.o   main.o
+
+all: main
+
+stats.o: stats.c stats.h
+	$(CC) $(CCFLAGS) -c stats.c -o stats.o
+
+data.o: data.c data.h
+	$(CC) $(CCFLAGS) -c data.c -o data.o
+
+operators.o: operators.c operators.h
+	$(CC) $(CCFLAGS) -c operators.c -o operators.o
+
+linalg.o: linalg.c linalg.h
+	$(CC) $(CCFLAGS) -c linalg.c -o linalg.o
+
+main.o: main.c $(HEADERS)
+	$(CC) $(CCFLAGS) -c $< -o $@
+
+main: $(OBJ)
+	$(CC) $^ -o $@ -Wl,--start-group -laccg -laccg2 -ldl -laccn -lacco -laccao -Wl,--end-group
+
+clean:
+	rm -f main *.o *.i *.ptx *.bin *.gpu
+
+test: main
+	PGI_ACC_TIME=1 ./main 128 128 100 0.01
