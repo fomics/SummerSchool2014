@@ -18,123 +18,96 @@
 #define X(j,i) x_old[(i) + (j)*nx]
 
 // TODO
-// Taget: Given that up and sp data are already on GPU, convert diffusion function
-// to a GPU kernel or a set of GPU kernels
+// Taget: Given that up and sp data are already on GPU, implement a set of
+// GPU kernels for diffusion operator
 // Things to note:
 // 1) Look into how kernels in linalg are implemented
 // 2) Note the code which provides kernels with optimal compute grid configs
 // 3) Note options structure has cpu:: and gpu:: versions
 // 4) Note you can turn every loop of diffusion into separate GPU kernel
 // and run all of them asynchronously.
-void diffusion(const double* up, double* sp)
+namespace gpu
 {
-    double dxs   = 1000.*options.dx*options.dx;
-    double alpha = options.alpha;
-    int    iend  = options.nx - 1;
-    int    jend  = options.ny - 1;
+	namespace diffusion_interior_grid_points_kernel
+	{
+		template<short V, typename T>
+		__global__ void kernel(const double* const __restrict__ up, double* __restrict__ sp)
+		{
+			// TODO implement GPU kernel, equivalent to the original code in cuda-1/operators.c
+		}
 
-    int i,j;
+		config_t config;
+	}
 
-    int nx=options.nx;
-    int ny=options.ny;
+	namespace diffusion_east_west_boundary_points_kernel
+	{
+		template<short V, typename T>
+		__global__ void kernel(const double* const __restrict__ up, double* __restrict__ sp)
+		{
+			// TODO implement GPU kernel, equivalent to the original code in cuda-1/operators.c
+		}
 
-    // the interior grid points
-    for (j = 1; j < jend; j++)
-        for (i = 1; i < iend; i++)
-        {
-            S(j, i) = -(4. + alpha)*U(j,i)               // central point
-                                    + U(j,i-1) + U(j,i+1) // east and west
-                                    + U(j-1,i) + U(j+1,i) // north and south
+		config_t config;
+	}
 
-                                    + alpha*X(j,i)
-                                    + dxs*U(j,i)*(1.0 - U(j,i));
-        }
-    // the east boundary
-    {
-        i = options.nx - 1;
-        for (j = 1; j < jend; j++)
-        {
-            S(j, i) = -(4. + alpha) * U(j,i)
-                        + U(j, i - 1) + U(j - 1, i) + U(j + 1, i)
-                        + alpha*X(j, i) + bndE[j]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
-    }
-    // the west boundary
-    {
-        i = 0;
-        for (j = 1; j < jend; j++)
-        {
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i + 1) + U(j - 1, i) + U(j + 1, i)
+	namespace diffusion_north_south_boundary_points_kernel
+	{
+		template<short V, typename T>
+		__global__ void kernel(const double* const __restrict__ up, double* __restrict__ sp)
+		{
+			// TODO implement GPU kernel, equivalent to the original code in cuda-1/operators.c
+		}
 
-                        + alpha*X(j, i) + bndW[j]
-                        + dxs*U(j, i) * (1.0 - U(j, i));
-        }
-    }
-    // the north boundary (plus NE and NW corners)
-    {
-        j = options.ny - 1;
+		config_t config;
+	}
 
-        {
-            i = 0; // NW corner
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i + 1) + U(j - 1, i)
+	namespace diffusion_corner_points_kernel
+	{
+		__global__ void kernel(const double* const __restrict__ up, double* __restrict__ sp)
+		{
+			// TODO implement GPU kernel, equivalent to the original code in cuda-1/operators.c
+		}
+	}
+}
 
-                        + alpha * X(j, i) + bndW[j] + bndN[i]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
+inline void diffusion(const double* const __restrict__ up, double* __restrict__ sp)
+{
+	{
+		using namespace gpu;
 
-        // north boundary
-        for (i = 1; i < iend; i++)
-        {
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i - 1) + U(j, i + 1) + U(j - 1, i)
-                        + alpha*X(j, i) + bndN[i]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
+		// Launch kernel for parallel processing of interior points.
+		{
+			using namespace diffusion_interior_grid_points_kernel;
+			CUDA_LAUNCH_ERR_CHECK(kernel<1, gpu::double1><<<config.grid, config.block>>>(up, sp));
+		}
 
-        {
-            i = options.nx - 1; // NE corner
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i - 1) + U(j - 1, i)
-                        + alpha * X(j, i) + bndE[j] + bndN[i]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
-    }
-    // the south boundary
-    {
-        j = 0;
-        {
-            i = 0; // SW corner
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i + 1) + U(j + 1, i)
-                        + alpha * X(j, i) + bndW[j] + bndS[i]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
-        // south boundary
-        for (i = 1; i < iend; i++)
-        {
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i - 1) + U(j, i + 1) + U(j + 1, i)
-                        + alpha * X(j, i) + bndS[i]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
-        //
-        {
-            i = options.nx - 1; // SE corner
-            S(j, i) = -(4. + alpha) * U(j, i)
-                        + U(j, i - 1) + U(j + 1, i)
-                        + alpha * X(j, i) + bndE[j] + bndS[i]
-                        + dxs * U(j, i) * (1.0 - U(j, i));
-        }
-    }
-    // Accumulate the flop counts
-    // 8 ops total per point
-    flops_diff +=
-        + 12 * (options.nx - 2) * (options.ny - 2) // interior points
-        + 11 * (options.nx - 2  +  options.ny - 2) // NESW boundary points
-        + 11 * 4;                                  // corner points
+		// Launch kernels for parallel processing of boundary points.
+		{
+			using namespace diffusion_east_west_boundary_points_kernel;
+			CUDA_LAUNCH_ERR_CHECK(kernel<1, gpu::double1><<<config.grid, config.block>>>(up, sp));
+		}
+		{
+			using namespace diffusion_north_south_boundary_points_kernel;
+			CUDA_LAUNCH_ERR_CHECK(kernel<1, gpu::double1><<<config.grid, config.block>>>(up, sp));
+		}
+
+		// Finally, single-threaded processing of corner points.
+		{
+			using namespace diffusion_corner_points_kernel;
+			CUDA_LAUNCH_ERR_CHECK(kernel<<<1, 1>>>(up, sp));
+		}
+	}
+
+	{
+		using namespace cpu;
+		
+		// Accumulate the flop counts
+		// 8 ops total per point
+		flops_diff +=
+			+ 12 * (options.nx - 2) * (options.ny - 2) // interior points
+			+ 11 * (options.nx - 2  +  options.ny - 2) // NESW boundary points
+			+ 11 * 4;                                  // corner points}
+	}
 }
 
 #endif // OPERATORS_H
