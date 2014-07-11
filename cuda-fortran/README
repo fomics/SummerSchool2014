@@ -1,0 +1,17 @@
+This basic example shows how to combine Fortran host sources and CUDA C GPU kernels
+in a single application WITHOUT PGI CUDA Fortran.
+
+$ make
+gfortran -g -O3 -fopenmp -c cudafor.f90 -o cudafor.o
+gfortran -g -O3 -fopenmp -c sincos_host.f90 -o sincos_host.o
+nvcc -g -O3 -arch=sm_30 -c sincos_kernel.cu -o sincos_kernel.o
+nvcc -c cudaLaunch.cu -o cudaLaunch.o
+nvcc warning : The 'compute_10' and 'sm_10' architectures are deprecated, and may be removed in a future release.
+gcc -g -O3 -fopenmp -c main.c -o main.o
+gfortran -g -O3 -fopenmp -rdynamic sincos_host.o sincos_kernel.o cudafor.o cudaLaunch.o main.o -o sincos -L/opt/cuda/bin/../lib64 -lcudart -lcuda -ldl
+
+$ ./sincos 512 256 256
+ gpu time =   0.197946072    
+ gpu time =    6.95509911E-02
+ cpu time =   0.903216124    
+ diff =    2.38418579E-07
