@@ -1,0 +1,18 @@
+This sample shows the difference between ArrayOfStructures and StructursOfArrays.
+Kernel turns red, green and blue channels of image into grayscale.
+
+Input number of pixels (the image is not loaded or generated, because this code is only to measure performance)
+The result numbers are AoS and SoA execution time. Difference is about 25%
+
+coalescing.cu represents non-optimal data access pattern. It is proposed to restructure data in order to match coalescing conditions (or contiguous caching conditions)
+coalescing_res.cu contains updated code with optimized data access pattern.
+coalescing_comp.cu contains both of variants to compare performance.
+
+aivahnenko@tesla-cmc:~/PSU$ ./coalescing_comp
+input N
+10000000
+
+1.04765
+
+0.750496
+
